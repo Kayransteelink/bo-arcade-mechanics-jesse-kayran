@@ -7,6 +7,9 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     public float movementSpeed = 3;
     private Animator animator;
+    public float speed;
+    public float rotationSpeed;
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -40,6 +43,35 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.SetFloat("Speed", 2);
             transform.position += new Vector3(0, 0, movementSpeed * 1) * Time.deltaTime;
+        }
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
+
+        Vector3 movementDirection = new Vector3(horizontalInput, 0, verticalInput);
+        movementDirection.Normalize();
+
+        transform.Translate(movementDirection * speed * Time.deltaTime, Space.World);
+
+        if (movementDirection != Vector3.zero)
+        {
+            Quaternion toRotation = Quaternion.LookRotation(movementDirection, Vector3.up);
+
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+        }
+        if (Input.GetKeyDown(KeyCode.Z)){
+            animator.SetTrigger("Happy");
+        }
+        if (Input.GetKeyDown(KeyCode.X)){
+            animator.SetTrigger("relaxed");
+        }
+        if (Input.GetKeyDown(KeyCode.V)){
+            animator.SetTrigger("scared");
+        }
+        if (Input.GetKeyDown(KeyCode.C)){
+            animator.SetTrigger("battle");
+        }
+        if (Input.GetKeyDown(KeyCode.B)){
+            animator.SetTrigger("victory");
         }
     }
 }
